@@ -1,0 +1,82 @@
+default:
+  image: registry-gitlab.corp.mail.ru/calendar/docker/golang:1.17.7
+
+  tags:
+    - k8s-maildev-calendar-light
+
+  before_script:
+    - git config --global url."https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.corp.mail.ru/".insteadOf https://gitlab.corp.mail.ru/
+
+stages:
+  - build
+  - checks
+  - docker
+
+variables:
+  GOLANGCI_LINT_CACHE: $CI_PROJECT_DIR/.cache/golangci-lint
+  GOCACHE: $CI_PROJECT_DIR/.cache/go-build
+
+cache:
+  key: go-${CI_COMMIT_REF_NAME}
+  paths:
+    - .cache/go-build
+
+build_check:
+  stage: build
+  script:
+    - go build ./...
+
+goimports:
+  stage: checks
+  script:
+    - make goimports
+    - bash build/ci/scripts/assert_no_diff_except_gosum.sh
+
+lint:
+  tags:
+    - k8s-maildev-calendar
+  image: registry-gitlab.corp.mail.ru/calendar/docker/golangci-lint:v1.42.1
+  stage: checks
+  script:
+    - golangci-lint version
+    - golangci-lint run -c ./build/ci/golangci.yml -v ./... | tee .golangci_out
+  after_script:
+    - fgrep ".go:" .golangci_out
+
+lint::tests:
+  tags:
+    - k8s-maildev-calendar
+  image: registry-gitlab.corp.mail.ru/calendar/docker/golangci-lint:v1.42.1
+  stage: checks
+  script:
+    - golangci-lint version
+    - golangci-lint run -c ./build/ci/golangci.yml -c ./build/ci/golangci_tests.yml -v ./... | tee .golangci_out
+  after_script:
+    - fgrep ".go:" .golangci_out
+
+generate:
+  stage: checks
+  script:
+    - make generate
+    - bash build/ci/scripts/assert_no_diff_except_gosum.sh
+
+tidyvendor:
+  stage: checks
+  script:
+    - make tidyvendor
+    - bash build/ci/scripts/assert_no_diff.sh
+
+test:
+  stage: checks
+  script:
+    - make test
+
+  tags:
+    - k8s-maildev-calendar
+
+grouped_imports:
+  image: registry-gitlab.corp.mail.ru/calendar/docker/python:3.8
+  stage: checks
+  script:
+    - make groupimports
+    - bash build/ci/scripts/assert_no_diff.sh

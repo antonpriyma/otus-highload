@@ -1,0 +1,23 @@
+run:
+  tests: true
+  timeout: 30m
+
+linters-settings:
+  dupl:
+    threshold: 1000
+
+issues:
+  exclude:
+    - "should have comment"
+    - "always receives"
+    - "parameter .* is always"
+    - "comment on exported .* should be of the form"
+    - "Use of weak cryptographic primitive"
+    - "can be `fmt.Stringer`"
+    - "can be `github.com/gogo/protobuf/proto.Message`"
+    - 'ST1016: methods on the same type should have the same receiver name \(seen \d+x "[^"]+", 4x "v"\)'
+    - 'ST1016: methods on the same type should have the same receiver name \(seen 4x "v", \d+x "[^"]+"\)'
+    - 'ST1016: methods on the same type should have the same receiver name \(seen \d+x "[^"]+", \d+x "srv"\)'
+    - 'ST1016: methods on the same type should have the same receiver name \(seen \d+x "srv", \d+x "[^"]+"\)'
+    # for tests
+    - 'has \d+ occurrences, make it a constant'
