@@ -8,13 +8,11 @@ import (
 	"github.com/antonpriyma/otus-highload/pkg/log"
 	"github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
-	"sync/atomic"
 )
 
 type userRepository struct {
-	db           *sqlx.DB
-	logger       log.Logger
-	writeCounter atomic.Int32
+	db     *sqlx.DB
+	logger log.Logger
 }
 
 func (u userRepository) SearchUser(ctx context.Context, firstName string, secondName string) ([]models.User, error) {
@@ -32,7 +30,7 @@ type Config struct {
 }
 
 func NewUserRepository(cfg Config, logger log.Logger) (models.UserRepository, error) {
-	db, err := sqlx.Connect("mysql", "otus:Knowledge123_@tcp(localhost:3306)/otus")
+	db, err := sqlx.Connect("mysql", cfg.DataSourceName)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to connect to mysql")
 	}
@@ -43,7 +41,7 @@ func NewUserRepository(cfg Config, logger log.Logger) (models.UserRepository, er
 	}, nil
 }
 
-func (u *userRepository) CreateUser(ctx context.Context, model models.User) error {
+func (u userRepository) CreateUser(ctx context.Context, model models.User) error {
 	user := convertModelToUser(model)
 	_, err := u.db.ExecContext(
 		ctx,
@@ -55,8 +53,6 @@ func (u *userRepository) CreateUser(ctx context.Context, model models.User) erro
 		return errors.Wrap(convertSQLError(err), "failed to insert into users")
 	}
 
-	u.writeCounter.Add(1)
-	u.logger.Warn("write to db", "count", u.writeCounter.Load())
 	return nil
 }
 
