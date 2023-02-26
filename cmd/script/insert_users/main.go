@@ -18,7 +18,7 @@ import (
 const fileName = "cmd/script/insert_users/file.csv"
 
 func main() {
-	repository, err := mysql.NewUserRepository(mysql.Config{DataSourceName: "otus:otus@tcp(localhost:3306)/otus"}, log.Default())
+	repository, err := mysql.NewUserRepository(mysql.Config{DataSourceName: "otus:otus@tcp(localhost:s)/otus"}, log.Default())
 	if err != nil {
 		panic(err)
 	}
