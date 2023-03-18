@@ -15,6 +15,7 @@ node_modules
 unit-tests.xml
 .fleet
 guestia.pub
+build/sql/*
 
 parks.index
 places.index
