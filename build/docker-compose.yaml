@@ -1,4 +1,12 @@
 services:
+  redis:
+    image: redis:latest
+    container_name: redis
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    restart: on-failure
+    ports:
+      - "6379:6379"
   mysql:
     image: mysql:latest
     container_name: mysql
@@ -11,10 +19,38 @@ services:
       MYSQL_USER: otus
       MYSQL_PASSWORD: otus
     volumes:
-     - db:/var/lib/mysql
-     - ./init.sql:/data/application/init.sql
-    command: --init-file /data/application/init.sql
+     - ./sql/master/mysql:/var/lib/mysql
+     - ./sql/master/mysql.conf.cnf:/etc/my.cnf
 
+
+
+  mysql_slave:
+    image: mysql:latest
+    container_name: mysql_slave
+    depends_on:
+      - mysql
+    restart: on-failure
+    ports:
+      - "3307:3306"
+    env_file:
+      - ./sql/slave/slave.env
+    volumes:
+      - ./sql/slave/mysql:/var/lib/mysql
+      - ./sql/slave/mysql.conf.cnf:/etc/my.cnf
+
+  mysql_slave_1:
+    image: mysql:latest
+    container_name: mysql_slave_1
+    depends_on:
+      - mysql
+    restart: on-failure
+    ports:
+      - "3308:3306"
+    env_file:
+      - ./sql/slave_1/slave_1.env
+    volumes:
+      - ./sql/slave_1/mysql:/var/lib/mysql
+      - ./sql/slave_1/mysql.conf.cnf:/etc/my.cnf
 #  script:
 #    container_name: script
 #    build:
@@ -23,18 +59,16 @@ services:
 #    restart: on-failure
 #    depends_on:
 #      - mysql
-  app:
-    container_name: app
-    build:
-      context: ../
-      dockerfile: build/Dockerfile
-    ports:
-      - "8081:8081"
-    restart: on-failure
-    depends_on:
-      - mysql
+#  app:
+#    container_name: app
+#    build:
+#      context: ../
+#      dockerfile: build/Dockerfile
+#    ports:
+#      - "8081:8081"
+#    restart: on-failure
+#    depends_on:
+#      - mysql
+#      - mysql_salve
 
-volumes:
-  db:
-    driver: local
 

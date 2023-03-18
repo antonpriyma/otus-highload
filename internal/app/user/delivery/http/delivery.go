@@ -14,6 +14,14 @@ type userDelivery struct {
 	logger  log.Logger
 }
 
+func (u userDelivery) CreateFriend(ctx context.Context, userID models.UserID) error {
+	err := u.usecase.CreateFriend(ctx, userID)
+	if err != nil {
+		return errors.Wrap(convertUserError(err), "failed to create friendship")
+	}
+	return nil
+}
+
 func (u userDelivery) SearchUser(ctx context.Context, firstName string, secondName string) ([]models.User, error) {
 	users, err := u.usecase.SearchUser(ctx, firstName, secondName)
 	if err != nil {

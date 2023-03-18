@@ -51,3 +51,8 @@ func convertUsersToModels(users []User) []models.User {
 
 	return res
 }
+
+type Friendship struct {
+	User1 string `db:"user1"`
+	User2 string `db:"user2"`
+}
