@@ -61,7 +61,7 @@ groupimports:
 		\! -path './.git/*'\
 		\! -path '*.resolvers.go'\
 		\! -path './vendor/*' \
-		\! -name '*mock_generated.go' | xargs -L 1 python3 build/ci/scripts/group_imports.py
+		\! -name '*mock_generated.go' | xargs -L 1 python3 build/ci/scripts/group_imports.pys
 
 .PHONY: hardecho
 hardecho:

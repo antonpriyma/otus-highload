@@ -114,6 +114,86 @@
         }
       }
     },
+    "user/search/{username}": {
+      "get": {
+        "description": "Поиск пользователей по логину",
+        "parameters": [
+          {
+            "name": "username",
+            "required": true,
+            "in": "path",
+            "description": "Логин пользователя"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешный поиск пользователей",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "500": {
+            "$ref": "#/components/responses/5xx"
+          }
+        }
+      }
+    },
+    "/post/feed": {
+      "get": {
+        "description": "Получение списка постов",
+        "parameters": [
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Количество постов на странице"
+          },
+          {
+            "name": "offset",
+            "required": false,
+            "in": "query",
+            "description": "Смещение относительно первого поста"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешное получение списка постов",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Post"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "500": {
+            "$ref": "#/components/responses/5xx"
+          }
+        }
+      }
+    },
     "/user/get/{username}": {
       "get": {
         "description": "Получение анкеты пользователя",
@@ -168,6 +248,26 @@
       }
     },
     "schemas": {
+      "Post": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": 1,
+            "description": "Идентификатор поста"
+          },
+          "user_id": {
+              "type": "string",
+              "example": "uuid",
+              "description": "uuid"
+          },
+          "text": {
+            "type": "string",
+            "example": "Текст поста",
+            "description": "Текст поста"
+          }
+        }
+      },
       "User": {
         "type": "object",
         "properties": {

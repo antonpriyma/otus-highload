@@ -4,15 +4,16 @@ import (
 	"context"
 	"encoding/csv"
 	"fmt"
-	"github.com/antonpriyma/otus-highload/internal/app/models"
-	"github.com/antonpriyma/otus-highload/internal/app/user/repository/mysql"
-	"github.com/antonpriyma/otus-highload/pkg/log"
-	"github.com/google/uuid"
 	"math/rand"
 	"os"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/antonpriyma/otus-highload/internal/app/models"
+	"github.com/antonpriyma/otus-highload/internal/app/user/repository/mysql"
+	"github.com/antonpriyma/otus-highload/pkg/log"
+	"github.com/google/uuid"
 )
 
 const fileName = "cmd/script/insert_users/file.csv"
