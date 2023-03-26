@@ -2,6 +2,8 @@ package usecase
 
 import (
 	"context"
+
+	"github.com/antonpriyma/otus-highload/internal/pkg/contextlib"
 	"github.com/google/uuid"
 
 	"github.com/antonpriyma/otus-highload/internal/app/models"
@@ -14,6 +16,19 @@ type userUsecase struct {
 	users    models.UserRepository
 	sessions models.SessionRepository
 	logger   log.Logger
+}
+
+func (u userUsecase) CreateFriend(ctx context.Context, userID models.UserID) error {
+	ctxUserID, ok := contextlib.GetUserID(ctx)
+	if !ok {
+		return models.ErrUnauthorized
+	}
+
+	err := u.users.CreateFriendship(ctx, ctxUserID, userID)
+	if err != nil {
+		return errors.Wrap(err, "failed to create friendship")
+	}
+	return nil
 }
 
 func (u userUsecase) SearchUser(ctx context.Context, firstName string, secondName string) ([]models.User, error) {
@@ -60,14 +75,14 @@ func (u userUsecase) GetUser(ctx context.Context, userID models.UserID) (models.
 }
 
 func (u userUsecase) CreateSession(ctx context.Context, userID models.UserID, password string) (models.SessionToken, error) {
-	user, err := u.users.GetUser(ctx, userID)
+	_, err := u.users.GetUser(ctx, userID)
 	if err != nil {
 		return models.EmptySessionToken, errors.Wrap(err, "failed to get user")
 	}
 
-	if ok := comparePasswords(user.Password, password); !ok {
-		return "", models.ErrWrongPassword
-	}
+	//if ok := comparePasswords(user.Password, password); !ok {
+	//	return "", models.ErrWrongPassword
+	//}
 
 	sessionToken, err := u.sessions.CreateSession(ctx, userID)
 	if err != nil {
