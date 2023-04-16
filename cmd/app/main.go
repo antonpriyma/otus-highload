@@ -6,6 +6,7 @@ import (
 	dialog_usecase "github.com/antonpriyma/otus-highload/internal/app/dialog/usecase"
 	"github.com/antonpriyma/otus-highload/internal/app/models"
 	post_delivery "github.com/antonpriyma/otus-highload/internal/app/post/delivery/http"
+	"github.com/antonpriyma/otus-highload/internal/app/post/notifer"
 	post_repo "github.com/antonpriyma/otus-highload/internal/app/post/repository/mysql"
 	post_usecase "github.com/antonpriyma/otus-highload/internal/app/post/usecase"
 	map_repository "github.com/antonpriyma/otus-highload/internal/app/session/repository/map"
@@ -20,7 +21,9 @@ import (
 	"github.com/antonpriyma/otus-highload/pkg/framework/echo/echoutils"
 	"github.com/antonpriyma/otus-highload/pkg/framework/service"
 	"github.com/antonpriyma/otus-highload/pkg/utils"
+	"github.com/google/uuid"
 	"github.com/labstack/echo"
+	amqp "github.com/rabbitmq/amqp091-go"
 	"net/http"
 	"strconv"
 	"time"
@@ -75,7 +78,18 @@ func main() {
 	postRepository, err := post_repo.NewPostRepository(cfg.PostsConfig.Repo, svc.Logger)
 	utils.Must(svc.Logger, err, "failed to create posts repository")
 
-	postUsecase := post_usecase.NewPostUsecase(postRepository, svc.Logger)
+	conn, err := amqp.Dial("amqp://otus:otus@rabbitmq:5672/otus")
+	utils.Must(svc.Logger, err, "Failed to connect to RabbitMQ")
+	defer conn.Close()
+
+	ch, err := conn.Channel()
+	utils.Must(svc.Logger, err, "Failed to open a channel")
+	defer ch.Close()
+
+	notifier, err := notifer.NewNotifer(ch)
+	utils.Must(svc.Logger, err, "Failed to create notifier")
+
+	postUsecase := post_usecase.NewPostUsecase(postRepository, userRepository, notifier, svc.Logger)
 	postDelivery := post_delivery.NewPostDelivery(postUsecase, svc.Logger)
 
 	dialogRepo, err := dialog_repo.NewRepository(cfg.DialogsConfig.Repo, svc.Logger)
@@ -184,6 +198,40 @@ func main() {
 		}
 
 		return c.JSON(http.StatusOK, posts)
+	})
+
+	svc.API.POST("/post/create", func(c echo.Context) error {
+		userID, ok := contextlib.GetUserID(echoutils.MustGetContext(c))
+		if !ok {
+			return echoerrors.ValidationError(errors.New("user id not found"), "user id not found", echoerrors.ValidationErrorFields{})
+		}
+
+		type CreatePostRequest struct {
+			Text string `json:"text"`
+		}
+
+		req := new(CreatePostRequest)
+		if err := c.Bind(req); err != nil {
+			return echoerrors.ValidationError(err, "failed to bind request", echoerrors.ValidationErrorFields{})
+		}
+
+		postID, err := postDelivery.CreatePost(c.Request().Context(), models.Post{
+			ID:     models.PostID(uuid.New().String()),
+			Text:   req.Text,
+			UserID: userID,
+		})
+
+		if err != nil {
+			return err
+		}
+
+		type CreatePostResponse struct {
+			PostID models.PostID `json:"post_id"`
+		}
+
+		return c.JSON(http.StatusOK, CreatePostResponse{
+			PostID: postID,
+		})
 	})
 
 	svc.API.POST("/dialog/:user_id/send", func(context echo.Context) error {

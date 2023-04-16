@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"github.com/antonpriyma/otus-highload/internal/app/post/notifer"
 	"github.com/antonpriyma/otus-highload/pkg/errors"
 
 	"github.com/antonpriyma/otus-highload/internal/app/models"
@@ -9,30 +10,36 @@ import (
 )
 
 type postUsecase struct {
-	posts  models.PostRepository
-	users  models.UserRepository
-	logger log.Logger
+	posts    models.PostRepository
+	users    models.UserRepository
+	Notifier notifer.Notifer
+	logger   log.Logger
 }
 
-func (p postUsecase) CreatePost(ctx context.Context, post models.Post) error {
-	err := p.posts.CreatePost(ctx, post)
+func (p postUsecase) CreatePost(ctx context.Context, post models.Post) (models.PostID, error) {
+	postID, err := p.posts.CreatePost(ctx, post)
 	if err != nil {
-		return errors.Wrap(err, "failed to create post")
+		return "", errors.Wrap(err, "failed to create post")
 	}
 
 	friendsList, err := p.users.GetFriends(ctx, post.UserID)
 	if err != nil {
-		return errors.Wrap(err, "failed to get friends list")
+		return "", errors.Wrap(err, "failed to get friends list")
 	}
 
 	for _, friend := range friendsList {
 		err = p.posts.AddToCache(ctx, string(friend), post)
 		if err != nil {
-			return errors.Wrap(err, "failed to add to cache")
+			return "", errors.Wrap(err, "failed to add to cache")
+		}
+
+		err = p.Notifier.Notify(ctx, post, friend)
+		if err != nil {
+			return "", errors.Wrap(err, "failed to notify")
 		}
 	}
 
-	return nil
+	return postID, nil
 }
 
 func (p postUsecase) GetFeed(ctx context.Context, userID models.UserID, limit int, offset int) ([]models.Post, error) {
@@ -44,9 +51,11 @@ func (p postUsecase) GetFeed(ctx context.Context, userID models.UserID, limit in
 	return posts, nil
 }
 
-func NewPostUsecase(posts models.PostRepository, logger log.Logger) models.PostUsecase {
+func NewPostUsecase(posts models.PostRepository, users models.UserRepository, notifier notifer.Notifer, logger log.Logger) models.PostUsecase {
 	return postUsecase{
-		posts:  posts,
-		logger: logger,
+		posts:    posts,
+		logger:   logger,
+		users:    users,
+		Notifier: notifier,
 	}
 }

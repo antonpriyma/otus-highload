@@ -7,4 +7,5 @@ RUN go mod download
 COPY . .
 RUN go build -o app ./cmd/app
 EXPOSE 8081
+RUN ls
 CMD ["./app","-config","./cmd/app/otus.yaml"]

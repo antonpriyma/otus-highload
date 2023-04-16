@@ -27,3 +27,12 @@ func (p PostDelivery) GetFeed(ctx context.Context, userID models.UserID, limit i
 
 	return posts, nil
 }
+
+func (p PostDelivery) CreatePost(ctx context.Context, post models.Post) (models.PostID, error) {
+	postID, err := p.Posts.CreatePost(ctx, post)
+	if err != nil {
+		return "", err
+	}
+
+	return postID, nil
+}

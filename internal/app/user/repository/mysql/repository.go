@@ -28,7 +28,7 @@ func (u userRepository) GetAllUsersIDs(ctx context.Context) ([]string, error) {
 
 func (u userRepository) GetFriends(ctx context.Context, userID models.UserID) ([]models.UserID, error) {
 	var friends []Friendship
-	err := u.db.GetContext(ctx, friends, "SELECT BIN_TO_UUID(user1) as user1, BIN_TO_UUID(user2) as user2 from friends where user1 = (?) or user2 = (?)", userID, userID)
+	err := u.db.SelectContext(ctx, &friends, "SELECT BIN_TO_UUID(user1) as user1, BIN_TO_UUID(user2) as user2 from friends where user1 = UUID_TO_BIN((?)) or UUID_TO_BIN((?))", userID, userID)
 	if err != nil {
 		return nil, errors.Wrap(convertSQLError(err), "failed to get friends")
 	}
