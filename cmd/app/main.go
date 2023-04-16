@@ -1,36 +1,40 @@
 package main
 
 import (
-	"fmt"
+	dialog_delivery "github.com/antonpriyma/otus-highload/internal/app/dialog/delivery/http"
+	dialog_repo "github.com/antonpriyma/otus-highload/internal/app/dialog/repository/mysql"
+	dialog_usecase "github.com/antonpriyma/otus-highload/internal/app/dialog/usecase"
+	"github.com/antonpriyma/otus-highload/internal/app/models"
 	post_delivery "github.com/antonpriyma/otus-highload/internal/app/post/delivery/http"
 	post_repo "github.com/antonpriyma/otus-highload/internal/app/post/repository/mysql"
 	post_usecase "github.com/antonpriyma/otus-highload/internal/app/post/usecase"
-	"github.com/antonpriyma/otus-highload/internal/pkg/contextlib"
-	"github.com/antonpriyma/otus-highload/internal/pkg/middleware"
-	"github.com/antonpriyma/otus-highload/pkg/errors"
-	"github.com/antonpriyma/otus-highload/pkg/framework/echo/echoerrors"
-	"github.com/antonpriyma/otus-highload/pkg/framework/echo/echoutils"
-	"net/http"
-	"strconv"
-	"sync/atomic"
-	"time"
-
-	"github.com/antonpriyma/otus-highload/internal/app/models"
 	map_repository "github.com/antonpriyma/otus-highload/internal/app/session/repository/map"
 	user_delivery "github.com/antonpriyma/otus-highload/internal/app/user/delivery/http"
 	user_repo "github.com/antonpriyma/otus-highload/internal/app/user/repository/mysql"
 	"github.com/antonpriyma/otus-highload/internal/app/user/usecase"
+	"github.com/antonpriyma/otus-highload/internal/pkg/contextlib"
+	"github.com/antonpriyma/otus-highload/internal/pkg/middleware"
+	"github.com/antonpriyma/otus-highload/pkg/errors"
 	"github.com/antonpriyma/otus-highload/pkg/framework/echo/echoapi"
+	"github.com/antonpriyma/otus-highload/pkg/framework/echo/echoerrors"
+	"github.com/antonpriyma/otus-highload/pkg/framework/echo/echoutils"
 	"github.com/antonpriyma/otus-highload/pkg/framework/service"
 	"github.com/antonpriyma/otus-highload/pkg/utils"
-
 	"github.com/labstack/echo"
+	"net/http"
+	"strconv"
+	"time"
 )
 
 type AppConfig struct {
 	service.Config `mapstructure:",squash"`
-	UsersConfig    UsersConfig `mapstructure:"users"`
-	PostsConfig    PostsConfig `mapstructure:"posts"`
+	UsersConfig    UsersConfig   `mapstructure:"users"`
+	PostsConfig    PostsConfig   `mapstructure:"posts"`
+	DialogsConfig  DialogsConfig `mapstructure:"dialogs"`
+}
+
+type DialogsConfig struct {
+	Repo dialog_repo.Config `mapstructure:"repository"`
 }
 
 type UsersConfig struct {
@@ -58,8 +62,6 @@ func main() {
 		Release: "local",
 	}
 
-	var count atomic.Int32
-
 	svc := echoapi.New(&cfg)
 
 	userRepository, err := user_repo.NewUserRepository(cfg.UsersConfig.Repo, svc.Logger)
@@ -75,6 +77,12 @@ func main() {
 
 	postUsecase := post_usecase.NewPostUsecase(postRepository, svc.Logger)
 	postDelivery := post_delivery.NewPostDelivery(postUsecase, svc.Logger)
+
+	dialogRepo, err := dialog_repo.NewRepository(cfg.DialogsConfig.Repo, svc.Logger)
+	utils.Must(svc.Logger, err, "failed to create dialogs repository")
+
+	dialogsUsecase := dialog_usecase.NewUsecase(dialogRepo, svc.Logger)
+	dialogDelivery := dialog_delivery.NewDialogDelivery(dialogsUsecase, svc.Logger)
 
 	svc.API.Use(middleware.AuthMiddleware)
 	svc.API.POST("/user/register", func(c echo.Context) error {
@@ -123,7 +131,6 @@ func main() {
 	})
 
 	svc.API.GET("/user/search", func(c echo.Context) error {
-		count.Add(1)
 		firstName := c.QueryParam("first_name")
 		secondName := c.QueryParam("second_name")
 
@@ -179,6 +186,72 @@ func main() {
 		return c.JSON(http.StatusOK, posts)
 	})
 
+	svc.API.POST("/dialog/:user_id/send", func(context echo.Context) error {
+		friendID := context.Param("user_id")
+		req := new(models.Message)
+		if err := context.Bind(req); err != nil {
+			return echoerrors.ValidationError(err, "failed to bind request", echoerrors.ValidationErrorFields{})
+		}
+
+		userID, ok := contextlib.GetUserID(echoutils.MustGetContext(context))
+		if !ok {
+			return echoerrors.ValidationError(errors.New("user id not found"), "user id not found", echoerrors.ValidationErrorFields{})
+		}
+		err := dialogDelivery.SendMessage(context.Request().Context(), models.Message{
+			From: userID,
+			Text: req.Text,
+			To:   models.UserID(friendID),
+		})
+		if err != nil {
+			return err
+		}
+
+		return context.JSON(http.StatusOK, nil)
+	})
+
+	svc.API.POST("/dialog/:user_id/send", func(context echo.Context) error {
+		friendID := context.Param("user_id")
+		type SendRequest struct {
+			Text string `json:"text"`
+		}
+
+		req := new(SendRequest)
+		if err := context.Bind(req); err != nil {
+			return echoerrors.ValidationError(err, "failed to bind request", echoerrors.ValidationErrorFields{})
+		}
+
+		userID, ok := contextlib.GetUserID(echoutils.MustGetContext(context))
+		if !ok {
+			return echoerrors.UnauthorizedError(errors.New("user id not found"), "user id not found", "user id not found")
+		}
+
+		err := dialogDelivery.SendMessage(context.Request().Context(), models.Message{
+			From: userID,
+			To:   models.UserID(friendID),
+			Text: req.Text,
+		})
+		if err != nil {
+			return err
+		}
+
+		return context.JSON(http.StatusOK, nil)
+	})
+
+	svc.API.GET("/dialog/:user_id/list", func(c echo.Context) error {
+		friendID := c.Param("user_id")
+
+		userID, ok := contextlib.GetUserID(echoutils.MustGetContext(c))
+		if !ok {
+			return echoerrors.UnauthorizedError(errors.New("user id not found"), "user id not found", "user id not found")
+		}
+		messages, err := dialogDelivery.GetDialog(c.Request().Context(), userID, models.UserID(friendID))
+		if err != nil {
+			return err
+		}
+
+		return c.JSON(http.StatusOK, messages)
+
+	})
+
 	svc.Run()
-	defer fmt.Print(count)
 }

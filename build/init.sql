@@ -13,3 +13,14 @@ CREATE TABLE users
     city        VARCHAR(50)        NOT NULL,
     password    VARCHAR(255)       NOT NULL
 );
+
+CREATE TABLE messages
+(
+    ID            INT PRIMARY KEY AUTO_INCREMENT,
+    sender_uuid   BINARY(16),
+    receiver_uuid BINARY(16),
+    text          TEXT NOT NULL,
+
+    FOREIGN KEY (sender_uuid) REFERENCES users (uuid),
+    FOREIGN KEY (receiver_uuid) REFERENCES users (uuid)
+)

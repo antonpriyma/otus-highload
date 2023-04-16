@@ -3,9 +3,11 @@ log:
   level: debug
 users:
   repository:
-    data_source_name: "otus:Knowledge123@tcp(mysql:3306)/otus"
+    data_source_name: "otus:otus@tcp(localhost:3306)/otus"
 posts:
   repository:
-    data_source_name: "otus:Knowledge123@tcp(mysql:3306)/otus"
-
+    data_source_name: "otus:otus@tcp(localhost:3306)/otus"
+dialogs:
+  repository:
+    data_source_name: "otus:otus@tcp(localhost:3306)/otus"
 

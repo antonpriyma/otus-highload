@@ -30,7 +30,7 @@ type Config struct {
 }
 
 func NewPostRepository(cfg Config, logger log.Logger) (models.PostRepository, error) {
-	db, err := sqlx.Connect("mysql", "otus:Knowledge123_@tcp(localhost:3306)/otus")
+	db, err := sqlx.Connect("mysql", cfg.DataSourceName)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to connect to mysql")
 	}
