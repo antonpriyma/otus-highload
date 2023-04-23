@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/csv"
 	"fmt"
+	"github.com/antonpriyma/otus-highload/internal/app/user/repository/tarantool"
 	"math/rand"
 	"os"
 	"strconv"
@@ -11,7 +12,6 @@ import (
 	"time"
 
 	"github.com/antonpriyma/otus-highload/internal/app/models"
-	"github.com/antonpriyma/otus-highload/internal/app/user/repository/mysql"
 	"github.com/antonpriyma/otus-highload/pkg/log"
 	"github.com/google/uuid"
 )
@@ -19,7 +19,7 @@ import (
 const fileName = "cmd/script/insert_users/file.csv"
 
 func main() {
-	repository, err := mysql.NewUserRepository(mysql.Config{DataSourceName: "otus:otus@tcp(localhost:3306)/otus"}, log.Default())
+	repository, err := tarantool.NewUserRepository(tarantool.Config{Host: "localhost:3301", User: "admin", Pass: "pass"}, log.Default())
 	if err != nil {
 		panic(err)
 	}
