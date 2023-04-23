@@ -7,15 +7,17 @@ import (
 
 type PostDelivery interface {
 	GetFeed(ctx context.Context, userID UserID) ([]Post, error)
+	CreatePost(ctx context.Context, post Post) (PostID, error)
 }
 
 type PostUsecase interface {
 	GetFeed(ctx context.Context, userID UserID, limit int, offset int) ([]Post, error)
+	CreatePost(ctx context.Context, post Post) (PostID, error)
 }
 
 type PostRepository interface {
 	GetFeed(ctx context.Context, userID string, limit int, offset int) ([]Post, error)
-	CreatePost(ctx context.Context, post Post) error
+	CreatePost(ctx context.Context, post Post) (PostID, error)
 	GenerateCache(ctx context.Context, userID string) error
 	AddToCache(ctx context.Context, userID string, post Post) error
 }

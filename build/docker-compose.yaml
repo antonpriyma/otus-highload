@@ -22,35 +22,46 @@ services:
      - ./sql/master/mysql:/var/lib/mysql
      - ./sql/master/mysql.conf.cnf:/etc/my.cnf
 
-
-
-  mysql_slave:
-    image: mysql:latest
-    container_name: mysql_slave
-    depends_on:
-      - mysql
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
     restart: on-failure
     ports:
-      - "3307:3306"
-    env_file:
-      - ./sql/slave/slave.env
-    volumes:
-      - ./sql/slave/mysql:/var/lib/mysql
-      - ./sql/slave/mysql.conf.cnf:/etc/my.cnf
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=otus
+      - RABBITMQ_DEFAULT_PASS=otus
+      - RABBITMQ_DEFAULT_VHOST=otus
 
-  mysql_slave_1:
-    image: mysql:latest
-    container_name: mysql_slave_1
-    depends_on:
-      - mysql
-    restart: on-failure
-    ports:
-      - "3308:3306"
-    env_file:
-      - ./sql/slave_1/slave_1.env
-    volumes:
-      - ./sql/slave_1/mysql:/var/lib/mysql
-      - ./sql/slave_1/mysql.conf.cnf:/etc/my.cnf
+
+#  mysql_slave:
+#    image: mysql:latest
+#    container_name: mysql_slave
+#    depends_on:
+#      - mysql
+#    restart: on-failure
+#    ports:
+#      - "3307:3306"
+#    env_file:
+#      - ./sql/slave/slave.env
+#    volumes:
+#      - ./sql/slave/mysql:/var/lib/mysql
+#      - ./sql/slave/mysql.conf.cnf:/etc/my.cnf
+#
+#  mysql_slave_1:
+#    image: mysql:latest
+#    container_name: mysql_slave_1
+#    depends_on:
+#      - mysql
+#    restart: on-failure
+#    ports:
+#      - "3308:3306"
+#    env_file:
+#      - ./sql/slave_1/slave_1.env
+#    volumes:
+#      - ./sql/slave_1/mysql:/var/lib/mysql
+#      - ./sql/slave_1/mysql.conf.cnf:/etc/my.cnf
 #  script:
 #    container_name: script
 #    build:
@@ -59,16 +70,31 @@ services:
 #    restart: on-failure
 #    depends_on:
 #      - mysql
-#  app:
-#    container_name: app
-#    build:
-#      context: ../
-#      dockerfile: build/Dockerfile
-#    ports:
-#      - "8081:8081"
-#    restart: on-failure
-#    depends_on:
-#      - mysql
-#      - mysql_salve
+  app:
+    container_name: app
+    build:
+      context: ../
+      dockerfile: build/Dockerfile
+    ports:
+      - "8081:8081"
+    restart: on-failure
+    depends_on:
+      - rabbitmq
+      - mysql
+      - redis
+
+  post-notifier:
+      container_name: post-notifier
+      build:
+          context: ../
+          dockerfile: build/Dockerfile_notifier
+      ports:
+          - "8082:8082"
+      restart: on-failure
+      depends_on:
+          - app
+          - mysql
+          - redis
+          - rabbitmq
 
 

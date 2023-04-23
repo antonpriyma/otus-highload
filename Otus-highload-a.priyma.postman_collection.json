@@ -1,0 +1,264 @@
+{
+	"info": {
+		"_postman_id": "c0718d84-dc99-4b60-93d1-66b40d9cd52b",
+		"name": "Otus-highload-a.priyma",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "8961437"
+	},
+	"item": [
+		{
+			"name": "Register",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"first_name\": \"first_name\",\n    \"second_name\": \"second_name\",\n    \"age\": 23,\n    \"biography\": \"biography\",\n    \"city\": \"city\",\n    \"password\": \"password\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/user/register",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"user",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": 1,\n    \"password\": \"password\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/login",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get User",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": 1,\n    \"password\": \"password\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/login",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search Users",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": 1,\n    \"password\": \"password\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/login",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Feed",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-User-ID",
+						"value": "11404eab-4802-4b72-850f-884810237c5c",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{host}}/post/feed?X-User-ID=11404eab-4802-4b72-850f-884810237c5c",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"post",
+						"feed"
+					],
+					"query": [
+						{
+							"key": "X-User-ID",
+							"value": "11404eab-4802-4b72-850f-884810237c5c"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Send message",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-User-ID",
+						"value": "11404eab-4802-4b72-850f-884810237c5c",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"text\": \"test\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/dialog/000000a5-dbd9-4352-8187-1ed68b3679a2/send?X-User-ID=11404eab-4802-4b72-850f-884810237c5c",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"dialog",
+						"000000a5-dbd9-4352-8187-1ed68b3679a2",
+						"send"
+					],
+					"query": [
+						{
+							"key": "X-User-ID",
+							"value": "11404eab-4802-4b72-850f-884810237c5c"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create post",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-User-ID",
+						"value": "11404eab-4802-4b72-850f-884810237c5c",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"text\": \"test\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/post/create?X-User-ID=11404eab-4802-4b72-850f-884810237c5c",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"post",
+						"create"
+					],
+					"query": [
+						{
+							"key": "X-User-ID",
+							"value": "11404eab-4802-4b72-850f-884810237c5c"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get dialog",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-User-ID",
+						"value": "11404eab-4802-4b72-850f-884810237c5c",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"text\": \"test\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/dialog/000000a5-dbd9-4352-8187-1ed68b3679a2/send?X-User-ID=11404eab-4802-4b72-850f-884810237c5c",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"dialog",
+						"000000a5-dbd9-4352-8187-1ed68b3679a2",
+						"send"
+					],
+					"query": [
+						{
+							"key": "X-User-ID",
+							"value": "11404eab-4802-4b72-850f-884810237c5c"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

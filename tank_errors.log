@@ -1,0 +1,263 @@
+2023-04-28 13:20:04,236	Exception occurred:
+<type 'exceptions.RuntimeError'>: All connection attempts failed for host.docker.internal, use {phantom.connection_test: false} to disable it
+  File "/usr/local/lib/python2.7/dist-packages/yandextank/core/consoleworker.py", line 375, in run
+    self.core.plugins_configure()
+
+  File "/usr/local/lib/python2.7/dist-packages/yandextank/core/tankcore.py", line 245, in plugins_configure
+    plugin.configure()
+
+  File "/usr/local/lib/python2.7/dist-packages/yandextank/plugins/Phantom/plugin.py", line 72, in configure
+    self.phantom_config = self.phantom.config_file
+
+  File "/usr/local/lib/python2.7/dist-packages/yandextank/plugins/Phantom/plugin.py", line 81, in phantom
+    self._phantom.read_config()
+
+  File "/usr/local/lib/python2.7/dist-packages/yandextank/plugins/Phantom/utils.py", line 95, in read_config
+    stream.read_config()
+
+  File "/usr/local/lib/python2.7/dist-packages/yandextank/plugins/Phantom/utils.py", line 275, in read_config
+    self.address, do_test_connect, explicit_port)
+
+  File "/usr/local/lib/python2.7/dist-packages/yandextank/common/util.py", line 555, in resolve
+    raise RuntimeError(msg % address_str)
+
+2023-04-28 13:20:04,248	Job number is not available yet
+2023-04-28 13:20:04,253	Job number is not available yet
+2023-04-28 13:20:04,277	File already exists: /var/loadtest/logs/2023-04-28_13-20-03.889592/phantom_stat_tYBPW3.log
+2023-04-28 13:20:04,282	File already exists: /var/loadtest/logs/2023-04-28_13-20-03.889592/phout_BZkbKw.log
+2023-04-28 13:20:04,288	File already exists: /var/loadtest/logs/2023-04-28_13-20-03.889592/answ_A2hPO_.log
+2023-04-28 13:20:04,294	File not found to collect: validation_error.yaml
+2023-04-28 13:20:04,299	File already exists: /var/loadtest/logs/2023-04-28_13-20-03.889592/phantom_ht_u5a.log
+2023-04-28 13:23:58,054	Failed to read Overload API token from token.txt
+2023-04-28 13:23:58,063	Exception occurred:
+<type 'exceptions.RuntimeError'>: API token error
+  File "/usr/local/lib/python2.7/dist-packages/yandextank/core/consoleworker.py", line 377, in run
+    self.core.plugins_prepare_test()
+
+  File "/usr/local/lib/python2.7/dist-packages/yandextank/core/tankcore.py", line 254, in plugins_prepare_test
+    plugin.prepare_test()
+
+  File "/usr/local/lib/python2.7/dist-packages/yandextank/plugins/DataUploader/plugin.py", line 239, in prepare_test
+    lp_job = self.lp_job
+
+  File "/usr/local/lib/python2.7/dist-packages/yandextank/plugins/DataUploader/plugin.py", line 553, in lp_job
+    self._lp_job = self.__get_lp_job()
+
+  File "/usr/local/lib/python2.7/dist-packages/yandextank/plugins/DataUploader/plugin.py", line 569, in __get_lp_job
+    api_client = self.__get_api_client()
+
+  File "/usr/local/lib/python2.7/dist-packages/yandextank/plugins/DataUploader/plugin.py", line 529, in __get_api_client
+    self._api_token = self.read_token(self.get_option("token_file"))
+
+  File "/usr/local/lib/python2.7/dist-packages/yandextank/plugins/DataUploader/plugin.py", line 631, in read_token
+    raise RuntimeError("API token error")
+
+2023-04-28 13:23:58,088	Job number is not available yet
+2023-04-28 13:23:58,090	Job number is not available yet
+2023-04-28 13:23:58,113	File already exists: /var/loadtest/logs/2023-04-28_13-23-56.009343/phantom_stat_zkIWS0.log
+2023-04-28 13:23:58,117	File already exists: /var/loadtest/logs/2023-04-28_13-23-56.009343/phantom_u77Rp7.log
+2023-04-28 13:23:58,122	File already exists: /var/loadtest/logs/2023-04-28_13-23-56.009343/phout_lCuGqK.log
+2023-04-28 13:23:58,128	File already exists: /var/loadtest/logs/2023-04-28_13-23-56.009343/phantom_yJf0_Y.conf
+2023-04-28 13:23:58,132	File not found to collect: validation_error.yaml
+2023-04-28 13:23:58,138	File already exists: /var/loadtest/logs/2023-04-28_13-23-56.009343/answ_YdxZcv.log
+2023-04-28 13:25:39,301	File already exists: /var/loadtest/logs/2023-04-28_13-25-08.368263/phantom_0GQMYC.log
+2023-04-28 13:25:39,308	File already exists: /var/loadtest/logs/2023-04-28_13-25-08.368263/phantom_stdout_stderr_WRzngm.log
+2023-04-28 13:25:39,314	File already exists: /var/loadtest/logs/2023-04-28_13-25-08.368263/phantom_stat_xDBBlV.log
+2023-04-28 13:25:39,318	File already exists: /var/loadtest/logs/2023-04-28_13-25-08.368263/answ_NdI2XR.log
+2023-04-28 13:25:39,324	File not found to collect: validation_error.yaml
+2023-04-28 13:25:39,331	File already exists: /var/loadtest/logs/2023-04-28_13-25-08.368263/phout_3PuCkw.log
+2023-04-28 13:25:39,347	File already exists: /var/loadtest/logs/2023-04-28_13-25-08.368263/phantom_JV0vw_.conf
+2023-04-28 13:49:30,568	Exception occurred:
+<type 'exceptions.RuntimeError'>: Neither ammofile nor uris specified
+  File "/usr/local/lib/python2.7/dist-packages/yandextank/core/consoleworker.py", line 375, in run
+    self.core.plugins_configure()
+
+  File "/usr/local/lib/python2.7/dist-packages/yandextank/core/tankcore.py", line 245, in plugins_configure
+    plugin.configure()
+
+  File "/usr/local/lib/python2.7/dist-packages/yandextank/plugins/Phantom/plugin.py", line 72, in configure
+    self.phantom_config = self.phantom.config_file
+
+  File "/usr/local/lib/python2.7/dist-packages/yandextank/plugins/Phantom/utils.py", line 106, in config_file
+    self._config_file = self.compose_config()
+
+  File "/usr/local/lib/python2.7/dist-packages/yandextank/plugins/Phantom/utils.py", line 114, in compose_config
+    streams_config += stream.compose_config()
+
+  File "/usr/local/lib/python2.7/dist-packages/yandextank/plugins/Phantom/utils.py", line 288, in compose_config
+    self.stepper_wrapper.prepare_stepper()
+
+  File "/usr/local/lib/python2.7/dist-packages/yandextank/stepper/main.py", line 212, in prepare_stepper
+    self.stpd = self.__get_stpd_filename()
+
+  File "/usr/local/lib/python2.7/dist-packages/yandextank/stepper/main.py", line 266, in __get_stpd_filename
+    raise RuntimeError("Neither ammofile nor uris specified")
+
+2023-04-28 13:49:30,580	Job number is not available yet
+2023-04-28 13:49:30,583	Job number is not available yet
+2023-04-28 13:49:30,623	File already exists: /var/loadtest/logs/2023-04-28_13-49-30.225708/phantom_wIx9A_.log
+2023-04-28 13:49:30,628	File already exists: /var/loadtest/logs/2023-04-28_13-49-30.225708/answ_O1nBL_.log
+2023-04-28 13:49:30,633	File not found to collect: validation_error.yaml
+2023-04-28 13:49:30,638	File already exists: /var/loadtest/logs/2023-04-28_13-49-30.225708/phout_ieQjOh.log
+2023-04-28 13:49:30,643	File already exists: /var/loadtest/logs/2023-04-28_13-49-30.225708/phantom_stat_D8wWXp.log
+2023-04-28 13:50:38,251	Exception occurred:
+<class 'yandextank.stepper.module_exceptions.AmmoFileError'>: Error while reading ammo file. Position: 47, header: '/user/register?first_name=test&second_name=test', original exception: invalid literal for int() with base 10: '/user/register?first_name=test&second_name=test'
+  File "/usr/local/lib/python2.7/dist-packages/yandextank/core/consoleworker.py", line 375, in run
+    self.core.plugins_configure()
+
+  File "/usr/local/lib/python2.7/dist-packages/yandextank/core/tankcore.py", line 245, in plugins_configure
+    plugin.configure()
+
+  File "/usr/local/lib/python2.7/dist-packages/yandextank/plugins/Phantom/plugin.py", line 72, in configure
+    self.phantom_config = self.phantom.config_file
+
+  File "/usr/local/lib/python2.7/dist-packages/yandextank/plugins/Phantom/utils.py", line 106, in config_file
+    self._config_file = self.compose_config()
+
+  File "/usr/local/lib/python2.7/dist-packages/yandextank/plugins/Phantom/utils.py", line 114, in compose_config
+    streams_config += stream.compose_config()
+
+  File "/usr/local/lib/python2.7/dist-packages/yandextank/plugins/Phantom/utils.py", line 288, in compose_config
+    self.stepper_wrapper.prepare_stepper()
+
+  File "/usr/local/lib/python2.7/dist-packages/yandextank/stepper/main.py", line 228, in prepare_stepper
+    self.__make_stpd_file()
+
+  File "/usr/local/lib/python2.7/dist-packages/yandextank/stepper/main.py", line 318, in __make_stpd_file
+    stepper.write(os)
+
+  File "/usr/local/lib/python2.7/dist-packages/yandextank/stepper/main.py", line 61, in write
+    for missile in self.ammo:
+
+  File "/usr/local/lib/python2.7/dist-packages/yandextank/stepper/format.py", line 19, in <genexpr>
+    "%s %s %s\n%s\n" % (len(missile), timestamp, marker, missile)
+
+  File "/usr/local/lib/python2.7/dist-packages/yandextank/stepper/main.py", line 48, in <genexpr>
+    return ((timestamp, marker or self.marker(missile), missile)
+
+  File "/usr/local/lib/python2.7/dist-packages/yandextank/stepper/main.py", line 43, in <genexpr>
+    ammo
+
+  File "/usr/local/lib/python2.7/dist-packages/yandextank/stepper/main.py", line 44, in <genexpr>
+    for ammo in ((missile, marker or self.marker(missile))
+
+  File "/usr/local/lib/python2.7/dist-packages/yandextank/stepper/missile.py", line 358, in __iter__
+    % (ammo_file.tell(), chunk_header, e))
+
+2023-04-28 13:50:38,265	Job number is not available yet
+2023-04-28 13:50:38,268	Job number is not available yet
+2023-04-28 13:50:38,298	File already exists: /var/loadtest/logs/2023-04-28_13-50-37.849340/answ_lScxpW.log
+2023-04-28 13:50:38,303	File already exists: /var/loadtest/logs/2023-04-28_13-50-37.849340/phantom_zrov75.log
+2023-04-28 13:50:38,309	File not found to collect: validation_error.yaml
+2023-04-28 13:50:38,315	File already exists: /var/loadtest/logs/2023-04-28_13-50-37.849340/phout_BVqDdZ.log
+2023-04-28 13:50:38,319	File already exists: /var/loadtest/logs/2023-04-28_13-50-37.849340/phantom_stat_NY7bsB.log
+2023-04-28 13:56:16,374	File not found to collect: validation_error.yaml
+2023-04-28 13:56:16,381	File already exists: /var/loadtest/logs/2023-04-28_13-55-32.356556/phantom_zFF2Oh.conf
+2023-04-28 13:56:16,387	File already exists: /var/loadtest/logs/2023-04-28_13-55-32.356556/phantom_stat_9Ra7eO.log
+2023-04-28 13:56:16,393	File already exists: /var/loadtest/logs/2023-04-28_13-55-32.356556/phout_DRvIEm.log
+2023-04-28 13:56:16,412	File already exists: /var/loadtest/logs/2023-04-28_13-55-32.356556/phantom_o8p2uL.log
+2023-04-28 13:56:16,416	File already exists: /var/loadtest/logs/2023-04-28_13-55-32.356556/phantom_stdout_stderr_BBaFEI.log
+2023-04-28 13:56:16,420	File already exists: /var/loadtest/logs/2023-04-28_13-55-32.356556/answ_h_OBGM.log
+2023-04-28 13:58:10,710	Sparkline got outdated second 1682690244, oldest in list 1682690246
+2023-04-28 13:58:10,722	Sparkline got outdated second 1682690244, oldest in list 1682690246
+2023-04-28 13:58:10,726	Sparkline got outdated second 1682690244, oldest in list 1682690246
+2023-04-28 13:58:10,729	Sparkline got outdated second 1682690244, oldest in list 1682690246
+2023-04-28 13:58:10,732	Sparkline got outdated second 1682690244, oldest in list 1682690246
+2023-04-28 13:58:10,736	Sparkline got outdated second 1682690244, oldest in list 1682690246
+2023-04-28 13:58:10,741	Sparkline got outdated second 1682690244, oldest in list 1682690246
+2023-04-28 13:58:10,745	Sparkline got outdated second 1682690244, oldest in list 1682690246
+2023-04-28 13:58:10,750	Sparkline got outdated second 1682690244, oldest in list 1682690246
+2023-04-28 13:58:10,767	Sparkline got outdated second 1682690245, oldest in list 1682690246
+2023-04-28 13:58:10,778	Sparkline got outdated second 1682690245, oldest in list 1682690246
+2023-04-28 13:58:10,782	Sparkline got outdated second 1682690245, oldest in list 1682690246
+2023-04-28 13:58:10,786	Sparkline got outdated second 1682690245, oldest in list 1682690246
+2023-04-28 13:58:10,790	Sparkline got outdated second 1682690245, oldest in list 1682690246
+2023-04-28 13:58:10,793	Sparkline got outdated second 1682690245, oldest in list 1682690246
+2023-04-28 13:58:10,796	Sparkline got outdated second 1682690245, oldest in list 1682690246
+2023-04-28 13:58:10,799	Sparkline got outdated second 1682690245, oldest in list 1682690246
+2023-04-28 13:58:10,803	Sparkline got outdated second 1682690245, oldest in list 1682690246
+2023-04-28 13:58:12,340	File already exists: /var/loadtest/logs/2023-04-28_13-57-20.688585/answ_PGRnrA.log
+2023-04-28 13:58:12,346	File already exists: /var/loadtest/logs/2023-04-28_13-57-20.688585/phout_tBdPYl.log
+2023-04-28 13:58:12,356	File already exists: /var/loadtest/logs/2023-04-28_13-57-20.688585/phantom_stat_KUCObg.log
+2023-04-28 13:58:12,365	File not found to collect: validation_error.yaml
+2023-04-28 13:58:12,386	File already exists: /var/loadtest/logs/2023-04-28_13-57-20.688585/phantom_stdout_stderr_Pti0Wm.log
+2023-04-28 13:58:12,395	File already exists: /var/loadtest/logs/2023-04-28_13-57-20.688585/phantom_Wm3M2d.log
+2023-04-28 13:58:12,400	File already exists: /var/loadtest/logs/2023-04-28_13-57-20.688585/phantom_gndAQC.conf
+2023-04-28 14:00:13,255	File already exists: /var/loadtest/logs/2023-04-28_13-59-31.588309/phout_kA0tBG.log
+2023-04-28 14:00:13,261	File already exists: /var/loadtest/logs/2023-04-28_13-59-31.588309/answ_rBk6P2.log
+2023-04-28 14:00:13,267	File already exists: /var/loadtest/logs/2023-04-28_13-59-31.588309/phantom_DLG0fK.log
+2023-04-28 14:00:13,271	File already exists: /var/loadtest/logs/2023-04-28_13-59-31.588309/phantom_y3_jK8.conf
+2023-04-28 14:00:13,278	File not found to collect: validation_error.yaml
+2023-04-28 14:00:13,293	File already exists: /var/loadtest/logs/2023-04-28_13-59-31.588309/phantom_stdout_stderr_vCnT7k.log
+2023-04-28 14:00:13,298	File already exists: /var/loadtest/logs/2023-04-28_13-59-31.588309/phantom_stat_ZVDtRG.log
+2023-04-28 14:04:11,354	File already exists: /var/loadtest/logs/2023-04-28_14-03-16.177696/answ_kGHcua.log
+2023-04-28 14:04:11,360	File already exists: /var/loadtest/logs/2023-04-28_14-03-16.177696/phout_E0MS7q.log
+2023-04-28 14:04:11,365	File already exists: /var/loadtest/logs/2023-04-28_14-03-16.177696/phantom_oYUFsd.log
+2023-04-28 14:04:11,369	File already exists: /var/loadtest/logs/2023-04-28_14-03-16.177696/phantom_R9n6Kx.conf
+2023-04-28 14:04:11,374	File already exists: /var/loadtest/logs/2023-04-28_14-03-16.177696/phantom_stdout_stderr_JlvlWo.log
+2023-04-28 14:04:11,380	File not found to collect: validation_error.yaml
+2023-04-28 14:04:11,384	File already exists: /var/loadtest/logs/2023-04-28_14-03-16.177696/phantom_stat_Ir6x8A.log
+2023-04-28 14:12:13,519	Autostop criterion requested test stop: http(5xx,20%,1)
+2023-04-28 14:12:13,610	Autostop criterion requested test stop: 5xx codes count higher than 20.0% for 1s, since 1682691129
+2023-04-28 14:12:16,610	Failed post-processing plugin <yandextank.plugins.DataUploader.plugin.Plugin object at 0x4019299e90>
+Traceback (most recent call last):
+  File "/usr/local/lib/python2.7/dist-packages/yandextank/core/tankcore.py", line 336, in plugins_post_process
+    retcode = plugin.post_process(retcode)
+  File "/usr/local/lib/python2.7/dist-packages/yandextank/plugins/DataUploader/plugin.py", line 373, in post_process
+    int(rps), autostop.cause_criterion.explain())
+  File "/usr/local/lib/python2.7/dist-packages/yandextank/plugins/DataUploader/plugin.py", line 851, in set_imbalance_and_dsc
+    return self.api_client.set_imbalance_and_dsc(self.number, rps, comment)
+TypeError: set_imbalance_and_dsc() takes exactly 1 argument (4 given)
+2023-04-28 14:12:16,823	File already exists: /var/loadtest/logs/2023-04-28_14-11-41.797879/answ_ef4IQF.log
+2023-04-28 14:12:16,834	File already exists: /var/loadtest/logs/2023-04-28_14-11-41.797879/phantom_stat_ovQ6L8.log
+2023-04-28 14:12:16,846	File already exists: /var/loadtest/logs/2023-04-28_14-11-41.797879/phantom_Y7EjWN.conf
+2023-04-28 14:12:16,856	File already exists: /var/loadtest/logs/2023-04-28_14-11-41.797879/phantom_DGx3mQ.log
+2023-04-28 14:12:16,862	File already exists: /var/loadtest/logs/2023-04-28_14-11-41.797879/phantom_stdout_stderr_kpK2JM.log
+2023-04-28 14:12:16,871	File not found to collect: validation_error.yaml
+2023-04-28 14:12:16,879	File already exists: /var/loadtest/logs/2023-04-28_14-11-41.797879/autostop_report.txt
+2023-04-28 14:12:16,901	File already exists: /var/loadtest/logs/2023-04-28_14-11-41.797879/phout_oXCXUB.log
+2023-04-28 14:14:28,238	Autostop criterion requested test stop: http(5xx,20%,1)
+2023-04-28 14:14:28,343	Autostop criterion requested test stop: 5xx codes count higher than 20.0% for 1s, since 1682691258
+2023-04-28 14:14:31,529	Failed post-processing plugin <yandextank.plugins.DataUploader.plugin.Plugin object at 0x4019299e90>
+Traceback (most recent call last):
+  File "/usr/local/lib/python2.7/dist-packages/yandextank/core/tankcore.py", line 336, in plugins_post_process
+    retcode = plugin.post_process(retcode)
+  File "/usr/local/lib/python2.7/dist-packages/yandextank/plugins/DataUploader/plugin.py", line 373, in post_process
+    int(rps), autostop.cause_criterion.explain())
+  File "/usr/local/lib/python2.7/dist-packages/yandextank/plugins/DataUploader/plugin.py", line 851, in set_imbalance_and_dsc
+    return self.api_client.set_imbalance_and_dsc(self.number, rps, comment)
+TypeError: set_imbalance_and_dsc() takes exactly 1 argument (4 given)
+2023-04-28 14:14:31,701	File already exists: /var/loadtest/logs/2023-04-28_14-13-55.799186/phantom_jzsQP5.log
+2023-04-28 14:14:31,709	File already exists: /var/loadtest/logs/2023-04-28_14-13-55.799186/phout_0x5IqQ.log
+2023-04-28 14:14:31,713	File already exists: /var/loadtest/logs/2023-04-28_14-13-55.799186/answ_8OVE01.log
+2023-04-28 14:14:31,718	File already exists: /var/loadtest/logs/2023-04-28_14-13-55.799186/autostop_report.txt
+2023-04-28 14:14:31,725	File not found to collect: validation_error.yaml
+2023-04-28 14:14:31,731	File already exists: /var/loadtest/logs/2023-04-28_14-13-55.799186/phantom_stat_dUglw5.log
+2023-04-28 14:14:31,749	File already exists: /var/loadtest/logs/2023-04-28_14-13-55.799186/phantom_ZHrSXI.conf
+2023-04-28 14:14:31,754	File already exists: /var/loadtest/logs/2023-04-28_14-13-55.799186/phantom_stdout_stderr_Q2IvjH.log
+2023-04-28 14:15:43,943	Autostop criterion requested test stop: http(5xx,20%,1)
+2023-04-28 14:15:43,972	Autostop criterion requested test stop: 5xx codes count higher than 20.0% for 1s, since 1682691339
+2023-04-28 14:15:46,638	Failed post-processing plugin <yandextank.plugins.DataUploader.plugin.Plugin object at 0x4019299e90>
+Traceback (most recent call last):
+  File "/usr/local/lib/python2.7/dist-packages/yandextank/core/tankcore.py", line 336, in plugins_post_process
+    retcode = plugin.post_process(retcode)
+  File "/usr/local/lib/python2.7/dist-packages/yandextank/plugins/DataUploader/plugin.py", line 373, in post_process
+    int(rps), autostop.cause_criterion.explain())
+  File "/usr/local/lib/python2.7/dist-packages/yandextank/plugins/DataUploader/plugin.py", line 851, in set_imbalance_and_dsc
+    return self.api_client.set_imbalance_and_dsc(self.number, rps, comment)
+TypeError: set_imbalance_and_dsc() takes exactly 1 argument (4 given)
+2023-04-28 14:15:46,850	File already exists: /var/loadtest/logs/2023-04-28_14-15-21.700584/autostop_report.txt
+2023-04-28 14:15:46,854	File already exists: /var/loadtest/logs/2023-04-28_14-15-21.700584/answ_DuVuFH.log
+2023-04-28 14:15:46,858	File already exists: /var/loadtest/logs/2023-04-28_14-15-21.700584/phantom_stdout_stderr_TYBIJK.log
+2023-04-28 14:15:46,863	File already exists: /var/loadtest/logs/2023-04-28_14-15-21.700584/phantom_stat_LPYOEu.log
+2023-04-28 14:15:46,867	File already exists: /var/loadtest/logs/2023-04-28_14-15-21.700584/phantom_IsBLI2.conf
+2023-04-28 14:15:46,873	File not found to collect: validation_error.yaml
+2023-04-28 14:15:46,889	File already exists: /var/loadtest/logs/2023-04-28_14-15-21.700584/phout_a_cpHt.log
+2023-04-28 14:15:46,894	File already exists: /var/loadtest/logs/2023-04-28_14-15-21.700584/phantom_RwCO3T.log
+2023-04-28 14:16:34,493	File already exists: /var/loadtest/logs/2023-04-28_14-16-13.727498/phout__qCg12.log
+2023-04-28 14:16:34,499	File already exists: /var/loadtest/logs/2023-04-28_14-16-13.727498/phantom_stdout_stderr_LhEVhv.log
+2023-04-28 14:16:34,504	File already exists: /var/loadtest/logs/2023-04-28_14-16-13.727498/answ_Y9vrYT.log
+2023-04-28 14:16:34,509	File not found to collect: validation_error.yaml
+2023-04-28 14:16:34,513	File already exists: /var/loadtest/logs/2023-04-28_14-16-13.727498/phantom_stat_d0KOkf.log
+2023-04-28 14:16:34,530	File already exists: /var/loadtest/logs/2023-04-28_14-16-13.727498/phantom_CTlBbH.log
+2023-04-28 14:16:34,534	File already exists: /var/loadtest/logs/2023-04-28_14-16-13.727498/phantom_4_krc2.conf

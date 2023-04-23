@@ -15,18 +15,19 @@ type postRepository struct {
 	logger log.Logger
 }
 
-func (p postRepository) CreatePost(ctx context.Context, model models.Post) error {
+func (p postRepository) CreatePost(ctx context.Context, model models.Post) (models.PostID, error) {
 	post := convertModelToPost(model)
 	_, err := p.db.ExecContext(ctx, "INSERT INTO post (uuid, user_id, text) VALUES (UUID_TO_BIN(?), UUID_TO_BIN(?), ?)", post.UUID, post.UserID, post.Text)
 	if err != nil {
-		return errors.Wrap(convertSQLError(err), "failed to create post")
+		return "", errors.Wrap(convertSQLError(err), "failed to create post")
 	}
 
-	return nil
+	return model.ID, nil
 }
 
 type Config struct {
 	DataSourceName string `mapstructure:"data_source_name"`
+	RedisAddr      string `mapstructure:"redis_addr"`
 }
 
 func NewPostRepository(cfg Config, logger log.Logger) (models.PostRepository, error) {
@@ -36,7 +37,7 @@ func NewPostRepository(cfg Config, logger log.Logger) (models.PostRepository, er
 	}
 
 	redis := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
+		Addr:     cfg.RedisAddr,
 		Password: "", // no password set
 		DB:       0,  // use default DB
 	})
