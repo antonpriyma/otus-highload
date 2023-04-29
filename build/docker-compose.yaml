@@ -34,20 +34,17 @@ services:
       - RABBITMQ_DEFAULT_PASS=otus
       - RABBITMQ_DEFAULT_VHOST=otus
 
-#  tarantool:
-#    container_name: tarantool
-#    build:
-#      context: ./tarantool
-#      dockerfile: Dockerfile
-#    restart: on-failure
-#    ports:
-#      - "3301:3301"
-#      - "8081:8081"
-#    volumes:
-#      - ./tarantool/data:/var/lib/tarantool
-#      - ./tarantool/app.lua:/etc/tarantool/app.lua
-#    command:
-#      - tarantool /etc/tarantool/app.lua
+  tarantool:
+    container_name: tarantool
+    build:
+      context: ./tarantool
+      dockerfile: Dockerfile
+    restart: on-failure
+    ports:
+      - "3301:3301"
+    volumes:
+      - ./tarantool/data:/var/lib/tarantool
+      - ./tarantool/app.lua:/etc/tarantool/app.lua
 #  mysql_slave:
 #    image: mysql:latest
 #    container_name: mysql_slave
@@ -96,18 +93,18 @@ services:
       - mysql
       - redis
 
-#  post-notifier:
-#      container_name: post-notifier
-#      build:
-#          context: ../
-#          dockerfile: build/Dockerfile_notifier
-#      ports:
-#          - "8082:8082"
-#      restart: on-failure
-#      depends_on:
-#          - app
-#          - mysql
-#          - redis
-#          - rabbitmq
+  post-notifier:
+      container_name: post-notifier
+      build:
+          context: ../
+          dockerfile: build/Dockerfile_notifier
+      ports:
+          - "8082:8082"
+      restart: on-failure
+      depends_on:
+          - app
+          - mysql
+          - redis
+          - rabbitmq
 
 

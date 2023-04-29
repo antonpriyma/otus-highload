@@ -31,7 +31,7 @@ users:format({
 
 func (u userRepository) CreateUser(ctx context.Context, user models.User) error {
 	req := map[string]interface{}{
-		"uuid":        user.ID,
+		"uuid":        string(user.ID),
 		"username":    user.Username,
 		"first_name":  user.FirstName,
 		"second_name": user.SecondName,
@@ -65,7 +65,11 @@ func (u userRepository) GetFriends(ctx context.Context, userID models.UserID) ([
 }
 
 func (u userRepository) GetUser(ctx context.Context, userID models.UserID) (models.User, error) {
-	resp, err := u.conn.Call("GetUser", []interface{}{string(userID)})
+	resp, err := u.conn.Call("GetUser", []interface{}{
+		map[string]interface{}{
+			"uuid": string(userID),
+		},
+	})
 	if err != nil {
 		return models.User{}, err
 	}

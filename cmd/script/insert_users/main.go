@@ -47,8 +47,9 @@ func main() {
 		splitted := strings.Split(name, " ")
 		firstName, secondName := splitted[0], splitted[1]
 
+		uuidField := models.UserID(uuid.New().String())
 		err := repository.CreateUser(context.Background(), models.User{
-			ID:         models.UserID(uuid.New().String()),
+			ID:         uuidField,
 			Username:   generateUsername(),
 			FirstName:  firstName,
 			SecondName: secondName,
@@ -58,6 +59,12 @@ func main() {
 			City:       city,
 			Password:   generatePass(),
 		})
+
+		usr, err := repository.SearchUser(context.Background(), firstName, secondName)
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println(usr)
 
 		//res, err := http.Post("http://:8081/user/register", "application/json", strings.NewReader(string(body)))
 		if err != nil {

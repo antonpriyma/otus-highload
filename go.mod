@@ -25,6 +25,7 @@ require (
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spf13/viper v1.15.0
 	github.com/stretchr/testify v1.8.1
+	github.com/tarantool/go-tarantool v1.10.0
 	go.etcd.io/etcd/client/v3 v3.5.7
 	golang.org/x/crypto v0.4.0
 	golang.org/x/tools v0.5.0
@@ -64,7 +65,6 @@ require (
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/subosito/gotenv v1.4.2 // indirect
 	github.com/tarantool/go-openssl v0.0.8-0.20220711094538-d93c1eff4f49 // indirect
-	github.com/tarantool/go-tarantool v1.10.0 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.1 // indirect
 	github.com/vmihailenco/msgpack/v5 v5.3.5 // indirect
