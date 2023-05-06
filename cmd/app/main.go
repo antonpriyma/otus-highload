@@ -12,6 +12,7 @@ import (
 	map_repository "github.com/antonpriyma/otus-highload/internal/app/session/repository/map"
 	user_delivery "github.com/antonpriyma/otus-highload/internal/app/user/delivery/http"
 	user_repo "github.com/antonpriyma/otus-highload/internal/app/user/repository/mysql"
+	"github.com/antonpriyma/otus-highload/internal/app/user/repository/tarantool"
 	"github.com/antonpriyma/otus-highload/internal/app/user/usecase"
 	"github.com/antonpriyma/otus-highload/internal/pkg/contextlib"
 	"github.com/antonpriyma/otus-highload/internal/pkg/middleware"
@@ -20,6 +21,7 @@ import (
 	"github.com/antonpriyma/otus-highload/pkg/framework/echo/echoerrors"
 	"github.com/antonpriyma/otus-highload/pkg/framework/echo/echoutils"
 	"github.com/antonpriyma/otus-highload/pkg/framework/service"
+	"github.com/antonpriyma/otus-highload/pkg/log"
 	"github.com/antonpriyma/otus-highload/pkg/utils"
 	"github.com/google/uuid"
 	"github.com/labstack/echo"
@@ -68,7 +70,7 @@ func main() {
 
 	svc := echoapi.New(&cfg)
 
-	userRepository, err := user_repo.NewUserRepository(cfg.UsersConfig.Repo, svc.Logger)
+	userRepository, err := tarantool.NewUserRepository(tarantool.Config{Host: "tarantool:3301", User: "admin", Pass: "pass"}, log.Default())
 	utils.Must(svc.Logger, err, "failed to create users repository")
 
 	sessionRepository := map_repository.NewSessionRepository(svc.Logger)
@@ -104,8 +106,8 @@ func main() {
 		req := models.User{
 			ID:         models.UserID(uuid.New().String()),
 			Username:   generateUsername(),
-			FirstName:  "loadtest",
-			SecondName: "loadtest",
+			FirstName:  generateUsername(),
+			SecondName: generateUsername(),
 			Biography:  generateBio(),
 			Age:        123,
 			Sex:        models.UserSex(generateSex()),

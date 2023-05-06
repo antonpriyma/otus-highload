@@ -7,11 +7,14 @@ phantom:
   ssl: false
   load_profile:
     load_type: rps
-    schedule: step(100, 1000, 500, 1)
+    schedule: step(100, 2000, 100, 1)
+  timeout: 5s
   uris:
-    - /user/search?first_name=test&second_name=test
+    - /user/search?first_name=first_name&second_name=second_name
 telegraf:
   enabled: false
 autostop:
   autostop:
     - http(5xx,20%,1)
+    - http(1xx,20%,1)
+    - http(4xx,20%,1)
