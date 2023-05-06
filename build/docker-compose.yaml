@@ -34,17 +34,7 @@ services:
       - RABBITMQ_DEFAULT_PASS=otus
       - RABBITMQ_DEFAULT_VHOST=otus
 
-  tarantool:
-    container_name: tarantool
-    build:
-      context: ./tarantool
-      dockerfile: Dockerfile
-    restart: on-failure
-    ports:
-      - "3301:3301"
-    volumes:
-      - ./tarantool/data:/var/lib/tarantool
-      - ./tarantool/app.lua:/etc/tarantool/app.lua
+
 #  mysql_slave:
 #    image: mysql:latest
 #    container_name: mysql_slave

@@ -4,8 +4,6 @@ vendor/*
 coverage.out
 docker-compose.override.yml
 /test/search/tmp
-/build/tarantool/data/
-
 .idea
 .vscode
 http-client.private.env.json

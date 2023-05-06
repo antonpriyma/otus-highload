@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/csv"
 	"fmt"
-	"github.com/antonpriyma/otus-highload/internal/app/user/repository/tarantool"
 	"math/rand"
 	"os"
 	"strconv"
@@ -12,6 +11,7 @@ import (
 	"time"
 
 	"github.com/antonpriyma/otus-highload/internal/app/models"
+	"github.com/antonpriyma/otus-highload/internal/app/user/repository/mysql"
 	"github.com/antonpriyma/otus-highload/pkg/log"
 	"github.com/google/uuid"
 )
@@ -19,7 +19,7 @@ import (
 const fileName = "cmd/script/insert_users/file.csv"
 
 func main() {
-	repository, err := tarantool.NewUserRepository(tarantool.Config{Host: "localhost:3301", User: "admin", Pass: "pass"}, log.Default())
+	repository, err := mysql.NewUserRepository(mysql.Config{DataSourceName: "otus:otus@tcp(localhost:3306)/otus"}, log.Default())
 	if err != nil {
 		panic(err)
 	}
@@ -47,9 +47,8 @@ func main() {
 		splitted := strings.Split(name, " ")
 		firstName, secondName := splitted[0], splitted[1]
 
-		uuidField := models.UserID(uuid.New().String())
 		err := repository.CreateUser(context.Background(), models.User{
-			ID:         uuidField,
+			ID:         models.UserID(uuid.New().String()),
 			Username:   generateUsername(),
 			FirstName:  firstName,
 			SecondName: secondName,
@@ -59,12 +58,6 @@ func main() {
 			City:       city,
 			Password:   generatePass(),
 		})
-
-		usr, err := repository.SearchUser(context.Background(), firstName, secondName)
-		if err != nil {
-			panic(err)
-		}
-		fmt.Println(usr)
 
 		//res, err := http.Post("http://:8081/user/register", "application/json", strings.NewReader(string(body)))
 		if err != nil {
