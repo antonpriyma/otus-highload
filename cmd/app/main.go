@@ -15,6 +15,7 @@ import (
 	"github.com/antonpriyma/otus-highload/internal/app/user/usecase"
 	"github.com/antonpriyma/otus-highload/internal/pkg/contextlib"
 	"github.com/antonpriyma/otus-highload/internal/pkg/middleware"
+	"github.com/antonpriyma/otus-highload/pkg/dialogs/github.com/antonpriyma/otus-highload/pkg/dialogs"
 	"github.com/antonpriyma/otus-highload/pkg/errors"
 	"github.com/antonpriyma/otus-highload/pkg/framework/echo/echoapi"
 	"github.com/antonpriyma/otus-highload/pkg/framework/echo/echoerrors"
@@ -24,6 +25,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/labstack/echo"
 	amqp "github.com/rabbitmq/amqp091-go"
+	"google.golang.org/grpc"
+	"log"
 	"math/rand"
 	"net/http"
 	"strconv"
@@ -265,6 +268,14 @@ func main() {
 		return context.JSON(http.StatusOK, nil)
 	})
 
+	grpcConn := grpc.Dial(cfg.DialogsConfig.GRPCAddr, grpc.WithInsecure())
+	defer func() {
+		if err := grpcConn.Close(); err != nil {
+			log.Println(err)
+		}
+	}()
+
+	dialogsClient := dialogs.NewDialogsClient(grpcConn)
 	svc.API.POST("/dialog/:user_id/send", func(context echo.Context) error {
 		friendID := context.Param("user_id")
 		type SendRequest struct {
@@ -281,10 +292,12 @@ func main() {
 			return echoerrors.UnauthorizedError(errors.New("user id not found"), "user id not found", "user id not found")
 		}
 
-		err := dialogDelivery.SendMessage(context.Request().Context(), models.Message{
-			From: userID,
-			To:   models.UserID(friendID),
-			Text: req.Text,
+		_, err = dialogsClient.SendMessage(context.Request().Context(), &dialogs.SendMessageRequest{
+			Message: &dialogs.Message{
+				From: string(userID),
+				To:   friendID,
+				Text: req.Text,
+			},
 		})
 		if err != nil {
 			return err
