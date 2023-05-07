@@ -1,0 +1,7 @@
+log:
+  app: dialogs
+  level: debug
+dialogs:
+  repository:
+    data_source_name: "otus:otus@tcp(localhost:3306)/otus"
+

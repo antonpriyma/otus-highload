@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/antonpriyma/otus-highload/internal/app/models"
 	"github.com/antonpriyma/otus-highload/pkg/log"
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
 )
 
