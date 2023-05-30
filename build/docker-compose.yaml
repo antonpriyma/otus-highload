@@ -22,6 +22,21 @@ services:
      - ./sql/master/mysql:/var/lib/mysql
      - ./sql/master/mysql.conf.cnf:/etc/my.cnf
 
+  mysql_slave:
+    image: mysql:latest
+    container_name: mysql_slave
+    depends_on:
+      - mysql
+    restart: on-failure
+    ports:
+      - "3307:3306"
+    env_file:
+      - ./sql/slave/slave.env
+    volumes:
+      - ./sql/slave/mysql:/var/lib/mysql
+      - ./sql/slave/mysql.conf.cnf:/etc/my.cnf
+
+
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq
@@ -34,21 +49,6 @@ services:
       - RABBITMQ_DEFAULT_PASS=otus
       - RABBITMQ_DEFAULT_VHOST=otus
 
-
-#  mysql_slave:
-#    image: mysql:latest
-#    container_name: mysql_slave
-#    depends_on:
-#      - mysql
-#    restart: on-failure
-#    ports:
-#      - "3307:3306"
-#    env_file:
-#      - ./sql/slave/slave.env
-#    volumes:
-#      - ./sql/slave/mysql:/var/lib/mysql
-#      - ./sql/slave/mysql.conf.cnf:/etc/my.cnf
-#
 #  mysql_slave_1:
 #    image: mysql:latest
 #    container_name: mysql_slave_1
@@ -70,18 +70,33 @@ services:
 #    restart: on-failure
 #    depends_on:
 #      - mysql
-  app:
-    container_name: app
+  app_1:
+    container_name: app_1
     build:
       context: ../
       dockerfile: build/Dockerfile
     ports:
-      - "8081:8081"
+      - "8084:8081"
     restart: on-failure
     depends_on:
       - rabbitmq
       - mysql
       - redis
+      - haproxy
+
+  app_2:
+    container_name: app_2
+    build:
+      context: ../
+      dockerfile: build/Dockerfile
+    ports:
+      - "8083:8081"
+    restart: on-failure
+    depends_on:
+      - rabbitmq
+      - mysql
+      - redis
+      - haproxy
 
   post-notifier:
       container_name: post-notifier
@@ -92,9 +107,34 @@ services:
           - "8082:8082"
       restart: on-failure
       depends_on:
-          - app
+          - app_1
+#          - app_2
           - mysql
           - redis
           - rabbitmq
 
+  nginx:
+    container_name: nginx
+    build:
+      context: ../
+      dockerfile: build/Dockerfile_nginx
+    ports:
+      - "80:80"
+    restart: on-failure
+    depends_on:
+      - app_1
+#      - app_2
+      - post-notifier
+
+  haproxy:
+    container_name: haproxy
+    build:
+      context: ../
+      dockerfile: build/Dockerfile_haproxy
+    ports:
+      - "81:81"
+    restart: on-failure
+    depends_on:
+      - mysql
+      - mysql_slave
 
