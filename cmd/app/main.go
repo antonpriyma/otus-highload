@@ -1,9 +1,8 @@
 package main
 
 import (
-	dialog_delivery "github.com/antonpriyma/otus-highload/internal/app/dialog/delivery/http"
+	"context"
 	dialog_repo "github.com/antonpriyma/otus-highload/internal/app/dialog/repository/mysql"
-	dialog_usecase "github.com/antonpriyma/otus-highload/internal/app/dialog/usecase"
 	"github.com/antonpriyma/otus-highload/internal/app/models"
 	post_delivery "github.com/antonpriyma/otus-highload/internal/app/post/delivery/http"
 	"github.com/antonpriyma/otus-highload/internal/app/post/notifer"
@@ -15,15 +14,20 @@ import (
 	"github.com/antonpriyma/otus-highload/internal/app/user/usecase"
 	"github.com/antonpriyma/otus-highload/internal/pkg/contextlib"
 	"github.com/antonpriyma/otus-highload/internal/pkg/middleware"
+	"github.com/antonpriyma/otus-highload/pkg/context/reqid"
+	"github.com/antonpriyma/otus-highload/pkg/dialogs/github.com/antonpriyma/otus-highload/pkg/dialogs"
 	"github.com/antonpriyma/otus-highload/pkg/errors"
 	"github.com/antonpriyma/otus-highload/pkg/framework/echo/echoapi"
 	"github.com/antonpriyma/otus-highload/pkg/framework/echo/echoerrors"
 	"github.com/antonpriyma/otus-highload/pkg/framework/echo/echoutils"
+	"github.com/antonpriyma/otus-highload/pkg/framework/grpc/interceptors/client"
 	"github.com/antonpriyma/otus-highload/pkg/framework/service"
 	"github.com/antonpriyma/otus-highload/pkg/utils"
 	"github.com/google/uuid"
 	"github.com/labstack/echo"
 	amqp "github.com/rabbitmq/amqp091-go"
+	"google.golang.org/grpc"
+	"log"
 	"math/rand"
 	"net/http"
 	"strconv"
@@ -38,7 +42,9 @@ type AppConfig struct {
 }
 
 type DialogsConfig struct {
-	Repo dialog_repo.Config `mapstructure:"repository"`
+	Repo       dialog_repo.Config `mapstructure:"repository"`
+	GRPCAddr   string             `mapstructure:"grpc_addr"`
+	RabbitAddr string             `mapstructure:"rabbit_addr"`
 }
 
 type UsersConfig struct {
@@ -79,7 +85,7 @@ func main() {
 	postRepository, err := post_repo.NewPostRepository(cfg.PostsConfig.Repo, svc.Logger)
 	utils.Must(svc.Logger, err, "failed to create posts repository")
 
-	conn, err := amqp.Dial("amqp://otus:otus@rabbitmq:5672/otus")
+	conn, err := amqp.Dial(cfg.DialogsConfig.RabbitAddr)
 	utils.Must(svc.Logger, err, "Failed to connect to RabbitMQ")
 	defer conn.Close()
 
@@ -92,12 +98,6 @@ func main() {
 
 	postUsecase := post_usecase.NewPostUsecase(postRepository, userRepository, notifier, svc.Logger)
 	postDelivery := post_delivery.NewPostDelivery(postUsecase, svc.Logger)
-
-	dialogRepo, err := dialog_repo.NewRepository(cfg.DialogsConfig.Repo, svc.Logger)
-	utils.Must(svc.Logger, err, "failed to create dialogs repository")
-
-	dialogsUsecase := dialog_usecase.NewUsecase(dialogRepo, svc.Logger)
-	dialogDelivery := dialog_delivery.NewDialogDelivery(dialogsUsecase, svc.Logger)
 
 	svc.API.Use(middleware.AuthMiddleware)
 	svc.API.GET("/user/register", func(c echo.Context) error {
@@ -242,29 +242,29 @@ func main() {
 		})
 	})
 
-	svc.API.POST("/dialog/:user_id/send", func(context echo.Context) error {
-		friendID := context.Param("user_id")
-		req := new(models.Message)
-		if err := context.Bind(req); err != nil {
-			return echoerrors.ValidationError(err, "failed to bind request", echoerrors.ValidationErrorFields{})
-		}
+	grpcConn, err := grpc.Dial(
+		cfg.DialogsConfig.GRPCAddr,
+		grpc.WithInsecure(),
+		grpc.WithUnaryInterceptor(client.NewUnaryClientRequestIDInterceptor(func(ctx context.Context) string {
+			reqID := reqid.GetRequestID(ctx)
+			if reqID == "" {
+				reqID = uuid.New().String()
+			}
 
-		userID, ok := contextlib.GetUserID(echoutils.MustGetContext(context))
-		if !ok {
-			return echoerrors.ValidationError(errors.New("user id not found"), "user id not found", echoerrors.ValidationErrorFields{})
+			return reqID
+		})),
+		grpc.WithUnaryInterceptor(client.NewUnaryClientLoggingInterceptor(svc.Logger, client.LogParams{
+			Debug: true,
+		})),
+		grpc.WithUnaryInterceptor(client.NewUnaryClientStatInterceptor(client.StatConfig{Service: "dialogs"}, svc.StatRegistry)))
+	utils.Must(svc.Logger, err, "failed to dial grpc dialogs")
+	defer func() {
+		if err := grpcConn.Close(); err != nil {
+			log.Println(err)
 		}
-		err := dialogDelivery.SendMessage(context.Request().Context(), models.Message{
-			From: userID,
-			Text: req.Text,
-			To:   models.UserID(friendID),
-		})
-		if err != nil {
-			return err
-		}
+	}()
 
-		return context.JSON(http.StatusOK, nil)
-	})
-
+	dialogsClient := dialogs.NewDialogsClient(grpcConn)
 	svc.API.POST("/dialog/:user_id/send", func(context echo.Context) error {
 		friendID := context.Param("user_id")
 		type SendRequest struct {
@@ -281,10 +281,12 @@ func main() {
 			return echoerrors.UnauthorizedError(errors.New("user id not found"), "user id not found", "user id not found")
 		}
 
-		err := dialogDelivery.SendMessage(context.Request().Context(), models.Message{
-			From: userID,
-			To:   models.UserID(friendID),
-			Text: req.Text,
+		_, err = dialogsClient.SendMessage(context.Request().Context(), &dialogs.SendMessageRequest{
+			Message: &dialogs.Message{
+				From: string(userID),
+				To:   friendID,
+				Text: req.Text,
+			},
 		})
 		if err != nil {
 			return err
@@ -300,9 +302,21 @@ func main() {
 		if !ok {
 			return echoerrors.UnauthorizedError(errors.New("user id not found"), "user id not found", "user id not found")
 		}
-		messages, err := dialogDelivery.GetDialog(c.Request().Context(), userID, models.UserID(friendID))
+		grpcMessages, err := dialogsClient.GetMessages(c.Request().Context(), &dialogs.GetMessagesRequest{
+			From: friendID,
+			User: string(userID),
+		})
 		if err != nil {
 			return err
+		}
+
+		messages := make([]models.Message, 0, len(grpcMessages.Messages))
+		for _, grpcMessage := range grpcMessages.Messages {
+			messages = append(messages, models.Message{
+				From: models.UserID(grpcMessage.From),
+				To:   models.UserID(grpcMessage.To),
+				Text: grpcMessage.Text,
+			})
 		}
 
 		return c.JSON(http.StatusOK, messages)

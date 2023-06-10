@@ -83,6 +83,20 @@ services:
       - mysql
       - redis
 
+  dialogs:
+    container_name: dialogs
+    build:
+      context: ../
+      dockerfile: build/Dockerfile_dialogs
+    ports:
+      - "50051:50051"
+    restart: on-failure
+    depends_on:
+      - rabbitmq
+      - mysql
+      - redis
+      - appp
+
   post-notifier:
       container_name: post-notifier
       build:

@@ -1,0 +1,27 @@
+syntax = "proto3";
+option go_package = "github.com/antonpriyma/otus-highload/pkg/test";
+service Dialogs {
+  rpc SendMessage(SendMessageRequest) returns (SendMessageResponse) {}
+  rpc GetMessages(GetMessagesRequest) returns (GetMessagesResponse) {}
+}
+
+message SendMessageRequest {
+  Message message = 1;
+}
+
+message SendMessageResponse {}
+
+message GetMessagesRequest {
+  string user = 1;
+  string from = 2;
+}
+
+message GetMessagesResponse {
+  repeated Message messages = 1;
+}
+
+message Message {
+  string from = 1;
+  string to = 2;
+  string text = 3;
+}
